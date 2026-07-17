@@ -1,12 +1,16 @@
 ﻿from fastapi import FastAPI
-from app.api.routes import router as product_router
-from app.routers.categories import router as category_router
+from app.core.database import Base, engine
+from app.api.routes import cat_router, prod_router
+from app.api.recommendations import router as rec_router
 
-app = FastAPI(title="SmartShop Advisor API", version="1.0.0")
+Base.metadata.create_all(bind=engine)
 
-app.include_router(product_router)
-app.include_router(category_router)
+app = FastAPI(
+    title="SmartShop Advisor",
+    description="API مشاوره محصولات لولهکشی",
+    version="1.0.0"
+)
 
-@app.get("/")
-def read_root():
-    return {"message": "Welcome to SmartShop Advisor API"}
+app.include_router(cat_router)
+app.include_router(prod_router)
+app.include_router(rec_router, prefix="/recommendations", tags=["Recommendations"])
