@@ -1,139 +1,177 @@
-﻿from fastapi import APIRouter, Depends, HTTPException
-from sqlalchemy.orm import Session
+﻿from decimal import Decimal
 from typing import List, Optional
-from decimal import Decimal
-from pydantic import BaseModel, Field
+
+from fastapi import APIRouter, Depends, HTTPException
+from pydantic import BaseModel, ConfigDict, Field
+from sqlalchemy.orm import Session
+
 from app.core.database import get_db
 from app.models.product import Product
-from app.models.category import Category
 
 router = APIRouter()
 
+
 class RecommendationRequest(BaseModel):
-    diameter_mm: int = Field(..., description="قطر لوله مورد نیاز (میلیمتر)", example=110)
-    pipe_length_m: float = Field(..., description="طول مورد نیاز (متر)", example=50.0)
-    budget: Optional[Decimal] = Field(None, description="بودجه کل (تومان)", example=5000000)
-    material: Optional[str] = Field(None, description="جنس لوله: PVC, UPVC, PE, CI", example="PVC")
-    application: Optional[str] = Field(None, description="کاربرد: gravity_sewer, pressure_main, house_connection", example="gravity_sewer")
+    query: str = Field(..., min_length=2, description="عبارت جستجوی کاربر")
+    budget_min: Optional[Decimal] = Field(None, description="حداقل بودجه")
+    budget_max: Optional[Decimal] = Field(None, description="حداکثر بودجه")
+    preferred_brands: List[str] = Field(default_factory=list, description="برندهای ترجیحی")
+    preferred_keywords: List[str] = Field(default_factory=list, description="ویگی های اولویت دار")
+    limit: int = Field(default=5, ge=1, le=20, description="تعداد نتایج")
+
 
 class RecommendationItem(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
     product_id: int
     product_name: str
     unit_price: Decimal
-    estimated_total: Decimal
-    category_name: Optional[str]
-    match_score: int = Field(..., description="امتیاز تطابق 0-100")
-    reasons: List[str] = Field(..., description="دلایل توصیه")
+    category_name: Optional[str] = None
+    match_score: int = Field(..., ge=0, le=100)
+    reasons: List[str] = Field(default_factory=list)
 
-    class Config:
-        from_attributes = True
 
 class RecommendationResponse(BaseModel):
     query_summary: str
     recommendations: List[RecommendationItem]
-    engineering_notes: List[str]
+    ai_summary: str
 
-def calculate_match_score(product: Product, req: RecommendationRequest) -> tuple[int, list[str]]:
+
+def _safe_text(value: Optional[str]) -> str:
+    return (value or "").strip().lower()
+
+
+def _score_product(product: Product, req: RecommendationRequest) -> tuple[int, List[str]]:
     score = 0
-    reasons = []
-    name_lower = product.name.lower()
+    reasons: List[str] = []
 
-    if str(req.diameter_mm) in product.name:
-        score += 40
-        reasons.append(f"قطر {req.diameter_mm}mm با مشخصات محصول مطابقت دارد")
+    query_text = _safe_text(req.query)
+    product_name = _safe_text(getattr(product, "name", ""))
+    product_desc = _safe_text(getattr(product, "description", ""))
+    brand_name = _safe_text(getattr(product, "brand", ""))
 
-    if req.material:
-        if req.material.lower() in name_lower:
-            score += 30
-            reasons.append(f"جنس {req.material} در مشخصات محصول موجود است")
+    query_tokens = [token for token in query_text.split() if token]
+    if query_tokens:
+        matched_tokens = [
+            token for token in query_tokens
+            if token in product_name or token in product_desc
+        ]
+        if matched_tokens:
+            query_score = min(40, len(matched_tokens) * 10)
+            score += query_score
+            reasons.append(f"مرتبط با جستجوی کاربر: {', '.join(matched_tokens)}")
 
-    if req.budget is not None:
-        estimated_total = product.price * Decimal(str(req.pipe_length_m))
-        if estimated_total <= req.budget:
-            score += 20
-            reasons.append(f"برآورد هزینه {estimated_total:,.0f} تومان در محدوده بودجه است")
-        else:
+    matched_keywords = []
+    for kw in req.preferred_keywords:
+        kw_norm = _safe_text(kw)
+        if kw_norm and (kw_norm in product_name or kw_norm in product_desc):
+            matched_keywords.append(kw)
+    if matched_keywords:
+        kw_score = min(30, len(matched_keywords) * 8)
+        score += kw_score
+        reasons.append(f"ویگی های اولویت دار مطابق: {', '.join(matched_keywords)}")
+
+    matched_brands = []
+    for brand in req.preferred_brands:
+        brand_norm = _safe_text(brand)
+        if brand_norm and brand_norm in brand_name:
+            matched_brands.append(brand)
+    if matched_brands:
+        score += 15
+        reasons.append(f"برند ترجیحی مطابق: {', '.join(matched_brands)}")
+
+    price = getattr(product, "price", None)
+    if price is not None:
+        if req.budget_min is not None and price < req.budget_min:
+            score -= 5
+            reasons.append("کمتر از بودجه حداقل کاربر است")
+        if req.budget_max is not None and price > req.budget_max:
             score -= 10
-            reasons.append(f"برآورد هزینه {estimated_total:,.0f} تومان از بودجه فراتر میرود")
-
-    if req.application:
-        application_keywords = {
-            "gravity_sewer": ["فاضلاب", "گرانیتی", "جاذب"],
-            "pressure_main": ["تحت فشار", "آبرسانی", "pressure"],
-            "house_connection": ["انشعاب", "خانگی", "house"],
-        }
-        keywords = application_keywords.get(req.application, [])
-        for kw in keywords:
-            if kw in name_lower or (product.description and kw in product.description.lower()):
+            reasons.append("بالاتر از بودجه حداکثر کاربر است")
+        if req.budget_min is not None and req.budget_max is not None:
+            if req.budget_min <= price <= req.budget_max:
                 score += 10
-                reasons.append(f"مناسب برای کاربرد {req.application}")
-                break
+                reasons.append("در بازه بودجه کاربر قرار دارد")
+
+    category_name = _safe_text(getattr(getattr(product, "category", None), "name", ""))
+    if query_tokens and category_name:
+        if any(token in category_name for token in query_tokens):
+            score += 10
+            reasons.append(f"با دسته بندی {category_name} هم خوانی دارد")
 
     if not reasons:
-        reasons.append("محصول عمومی — نیاز به بررسی دستی دارد")
+        reasons.append("تطابق عمومی با نیازهای جستجو")
 
     return max(0, min(100, score)), reasons
 
-def get_engineering_notes(req: RecommendationRequest) -> List[str]:
-    notes = []
 
-    if req.diameter_mm < 100:
-        notes.append("⚠️ قطر کمتر از 100mm برای شبکه اصلی فاضلاب توصیه نمیشود (استاندارد EN 1401)")
-    elif req.diameter_mm >= 200:
-        notes.append("✅ قطر مناسب برای خط اصلی جمعآوری فاضلاب")
+def _ai_summary(req: RecommendationRequest, results: List[RecommendationItem]) -> str:
+    if not results:
+        return "هیچ کالایی با معیارهای فعلی پیدا نشد."
+    best = results[0]
+    return (
+        f"بهترین گزینه فعلا «{best.product_name}» است "
+        f"با امتیاز تطابق {best.match_score}/100. "
+        f"این نتیجه بر اساس جستجوی «{req.query}» و اولویت های ثبت شده کاربر ساخته شده است."
+    )
 
-    if req.application == "gravity_sewer":
-        notes.append("📐 شیب حداقل 1:100 برای خودپاکی لوله رعایت شود")
-        notes.append("🔧 عمق حداقل 1.2 متر برای حفاظت در برابر یخبندان")
-
-    if req.application == "pressure_main":
-        notes.append("🔒 آزمون فشار هیدرواستاتیک 1.5 برابر فشار کاری الزامی است")
-
-    if req.pipe_length_m > 100:
-        notes.append(f"📦 برای طول {req.pipe_length_m}m اتصالات و واشر را در برآورد لحاظ کنید (~10% اضافه)")
-
-    return notes
 
 @router.post(
     "/recommendations/",
     response_model=RecommendationResponse,
     tags=["Recommendations"],
-    summary="توصیه محصول بر اساس پارامترهای فنی"
+    summary="پیشنهاد کالا بر اساس جستجوی کاربر",
 )
-def get_recommendations(req: RecommendationRequest, db: Session = Depends(get_db)):
+def get_recommendations(
+    req: RecommendationRequest,
+    db: Session = Depends(get_db),
+):
     products = db.query(Product).all()
 
     if not products:
-        raise HTTPException(status_code=404, detail="هیچ محصولی در پایگاه داده موجود نیست")
+        raise HTTPException(
+            status_code=404,
+            detail="هیچ محصولی در پایگاه داده موجود نیست",
+        )
 
     results: List[RecommendationItem] = []
 
     for product in products:
-        score, reasons = calculate_match_score(product, req)
-        if score > 0:
-            estimated_total = product.price * Decimal(str(req.pipe_length_m))
-            category_name = product.category.name if product.category else None
-            results.append(RecommendationItem(
-                product_id=product.id,
-                product_name=product.name,
-                unit_price=product.price,
-                estimated_total=estimated_total,
+        score, reasons = _score_product(product, req)
+        if score <= 0:
+            continue
+
+        category_name = None
+        category = getattr(product, "category", None)
+        if category is not None:
+            category_name = getattr(category, "name", None)
+
+        results.append(
+            RecommendationItem(
+                product_id=getattr(product, "id"),
+                product_name=getattr(product, "name", ""),
+                unit_price=getattr(product, "price"),
                 category_name=category_name,
                 match_score=score,
-                reasons=reasons
-            ))
+                reasons=reasons,
+            )
+        )
 
-    results.sort(key=lambda x: x.match_score, reverse=True)
+    results.sort(key=lambda item: item.match_score, reverse=True)
+    results = results[: req.limit]
 
-    query_summary = (
-        f"جستجو برای لوله قطر {req.diameter_mm}mm"
-        f"{f' از جنس {req.material}' if req.material else ''}"
-        f" طول {req.pipe_length_m}m"
-        f"{f' بودجه {req.budget:,.0f} تومان' if req.budget else ''}"
-    )
+    budget_parts = []
+    if req.budget_min is not None:
+        budget_parts.append(f"از {req.budget_min:,.0f}")
+    if req.budget_max is not None:
+        budget_parts.append(f"تا {req.budget_max:,.0f}")
+
+    query_summary = f"جستجو: {req.query}"
+    if budget_parts:
+        query_summary += " | بودجه: " + " ".join(budget_parts)
 
     return RecommendationResponse(
         query_summary=query_summary,
-        recommendations=results[:5],
-        engineering_notes=get_engineering_notes(req)
+        recommendations=results,
+        ai_summary=_ai_summary(req, results),
     )
