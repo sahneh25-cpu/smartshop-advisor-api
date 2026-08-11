@@ -5,6 +5,10 @@ class ProductQuestionsRequest(BaseModel):
     product_name: str = Field(..., min_length=2, max_length=100)
 
 
+class DynamicQuestionFlowRequest(BaseModel):
+    user_query: str = Field(..., min_length=2, max_length=200)
+
+
 class ProductQuestion(BaseModel):
     key: str
     label: str
@@ -16,3 +20,4 @@ class ProductQuestion(BaseModel):
 class ProductQuestionsResponse(BaseModel):
     product_type: str
     questions: list[ProductQuestion]
+

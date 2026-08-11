@@ -2,7 +2,11 @@ import os
 
 from fastapi import APIRouter, Depends
 
-from app.schemas.ai import ProductQuestionsRequest, ProductQuestionsResponse
+from app.schemas.ai import (
+    DynamicQuestionFlowRequest,
+    ProductQuestionsRequest,
+    ProductQuestionsResponse,
+)
 from app.services.ai_provider_factory import get_ai_provider
 from app.services.product_question_service import ProductQuestionService
 
@@ -21,5 +25,15 @@ def generate_product_questions(
     service: ProductQuestionService = Depends(get_product_question_service),
 ) -> ProductQuestionsResponse:
     return service.get_product_questions(request.product_name)
+
+
+@router.post("/dynamic-question-flow", response_model=ProductQuestionsResponse)
+def generate_dynamic_question_flow(
+    request: DynamicQuestionFlowRequest,
+    service: ProductQuestionService = Depends(get_product_question_service),
+) -> ProductQuestionsResponse:
+    return service.get_product_questions(request.user_query)
+
+
 
 
