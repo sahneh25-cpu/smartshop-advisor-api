@@ -3,14 +3,14 @@ from sqlalchemy.orm import Session
 from sqlalchemy import or_
 from typing import List, Optional
 from decimal import Decimal
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 from app.core.database import get_db
 from app.models.product import Product
 from app.models.category import Category
 
 router = APIRouter()
 
-# ─── Category Schemas ────────────────────────────────────────────────────────
+# Category Schemas
 
 class CategoryCreate(BaseModel):
     name: str
@@ -24,10 +24,10 @@ class CategoryOut(BaseModel):
     id: int
     name: str
     description: Optional[str]
-    class Config:
-        from_attributes = True
 
-# ─── Product Schemas ──────────────────────────────────────────────────────────
+    model_config = ConfigDict(from_attributes=True)
+
+# Product Schemas
 
 class ProductCreate(BaseModel):
     name: str
@@ -48,10 +48,10 @@ class ProductOut(BaseModel):
     description: Optional[str]
     category_id: Optional[int]
     category: Optional[CategoryOut]
-    class Config:
-        from_attributes = True
 
-# ─── Category Endpoints ───────────────────────────────────────────────────────
+    model_config = ConfigDict(from_attributes=True)
+
+# Category Endpoints
 
 cat_router = APIRouter(prefix="/categories", tags=["Categories"])
 
@@ -93,7 +93,7 @@ def delete_category(cat_id: int, db: Session = Depends(get_db)):
     db.delete(cat)
     db.commit()
 
-# ─── Product Endpoints ────────────────────────────────────────────────────────
+# Product Endpoints
 
 prod_router = APIRouter(prefix="/products", tags=["Products"])
 
