@@ -1,25 +1,16 @@
 ﻿from pydantic import BaseModel
 from typing import Optional
 
-
-class CategoryBase(BaseModel):
+class CategoryCreate(BaseModel):
     name: str
     description: Optional[str] = None
-
-
-class CategoryCreate(CategoryBase):
-    pass
-
 
 class CategoryUpdate(BaseModel):
     name: Optional[str] = None
     description: Optional[str] = None
 
-
-class CategoryOut(CategoryBase):
+class Category(BaseModel):
     id: int
-
-    class Config:
-        from_attributes = True
-
-
+    name: str
+    description: Optional[str] = None
+    model_config = {"from_attributes": True}
