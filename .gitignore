@@ -47,3 +47,9 @@ htmlcov/
 .coverage
 
 .env
+
+search_results.txt
+test_key.py
+test_gemini.py
+list_models.py
+tests/__pycache__/
