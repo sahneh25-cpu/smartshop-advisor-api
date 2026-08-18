@@ -53,3 +53,10 @@ test_key.py
 test_gemini.py
 list_models.py
 tests/__pycache__/
+
+# Temporary code files and text backups
+*.bak
+backup/
+pasted-text*.txt
+project_structure.txt
+fix_files.py
