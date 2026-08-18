@@ -1,4 +1,11 @@
-﻿from app.services.ai_provider import AIProvider, GeminiProvider, LocalAIProvider
+﻿import os
+
+try:
+    from app.services.ai_provider import AIProvider, GeminiProvider, LocalAIProvider
+except ImportError:
+    from app.services.ai_provider import AIProvider, LocalAIProvider
+    GeminiProvider = None
+
 
 
 def get_ai_provider(provider_name: str | None = None) -> AIProvider:
@@ -8,3 +15,4 @@ def get_ai_provider(provider_name: str | None = None) -> AIProvider:
         return GeminiProvider()
 
     return LocalAIProvider()
+
