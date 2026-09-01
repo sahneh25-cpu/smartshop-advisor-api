@@ -1,37 +1,54 @@
-﻿from app.schemas.ai import ProductQuestionsResponse
+from typing import Any, Dict, Optional
+
+from app.schemas.ai import ProductQuestion, ProductQuestionsResponse
 from app.services.ai_provider import AIProvider
+from app.services.category_questions import product_type_label, unanswered_questions
 from app.services.query_understanding_service import QueryUnderstandingService
+
 
 class ProductQuestionService:
     def __init__(self, provider: AIProvider) -> None:
         self.provider = provider
-        # ایجاد نمونه از مفسر پرسش
         self.interpreter = QueryUnderstandingService(provider)
 
     def get_product_questions(self, product_name: str) -> ProductQuestionsResponse:
         return self.provider.generate_product_questions(product_name)
 
-    def get_dynamic_questions(self, user_query: str) -> ProductQuestionsResponse:
-        # 1. استخراج اطلاعات ساختاریافته (اینجا بودجه و نوع محصول در میاد)
-        intent = self.interpreter.interpret(user_query)
-        
-        # 2. تعیین نام محصول برای فرستادن به AI Provider
-        # اگر اینترپتر محصول را پیدا کرد (مثلا "لپ تاپ") از همان استفاده کن
-        # در غیر این صورت به عنوان fallback از کل کوئری استفاده کن
-        final_product_type = intent.product_type if intent.product_type else user_query
-        
-        # 3. گرفتن سوالات پایه از AI Provider
-        response = self.provider.generate_product_questions(final_product_type)
-        
-        # 4. اعمال فیلترینگ بر اساس اطلاعاتی که از قبل داریم
-        filtered_questions = response.questions
-        
-        # اگر بودجه شناسایی شده سوال بودجه را حذف کن
-        if intent.budget is not None:
-            filtered_questions = [q for q in filtered_questions if q.key != "budget"]
-            
-        # خروجی نهایی باید شامل نوع محصول استخراج شده باشد
+    def get_dynamic_questions(
+        self, user_query: str, current_answers: Optional[Dict[str, Any]] = None
+    ) -> ProductQuestionsResponse:
+        answers = current_answers or {}
+        intent = self.interpreter.interpret(user_query, answers)
+
+        final_product_type = intent.product_type or product_type_label(user_query)
+
+        try:
+            response = self.provider.generate_product_questions(final_product_type)
+        except Exception:
+            response = ProductQuestionsResponse(
+                product_type=final_product_type, questions=[]
+            )
+
+        catalog = unanswered_questions(user_query or final_product_type, answers)
+        if catalog:
+            questions = [ProductQuestion.model_validate(q) for q in catalog]
+        else:
+            questions = list(response.questions or [])
+
+        skip_budget = intent.budget is not None or "budget" in answers
+        if skip_budget:
+            questions = [q for q in questions if q.id != "budget" and q.key != "budget"]
+
+        missing_slots = set(intent.missing_slots or [])
+        if missing_slots:
+            slotted = [q for q in questions if q.id in missing_slots or q.key in missing_slots]
+            if slotted:
+                questions = slotted
+
+        answered_keys = {k for k, v in answers.items() if v not in (None, "", "انتخاب کنید")}
+        questions = [q for q in questions if q.id not in answered_keys and q.key not in answered_keys]
+
         return ProductQuestionsResponse(
             product_type=final_product_type,
-            questions=filtered_questions
+            questions=questions,
         )
