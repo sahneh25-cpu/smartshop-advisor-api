@@ -1,14 +1,20 @@
 ﻿from typing import Literal, Optional
 from pydantic import BaseModel, HttpUrl
 
-SearchType = Literal["marketplace", "aggregator", "classified", "retail"]
+SourceType = Literal["retail", "marketplace", "aggregator", "classified"]
+ItemCondition = Literal["new", "used"]
+SellerType = Literal["individual", "business"]
+DomainScope = Literal["electronics", "appliances", "automotive", "general"]
 
 
 class StoreBase(BaseModel):
     name: str
     slug: str
     website: HttpUrl
-    search_type: SearchType = "retail"
+    source_type: SourceType = "retail"
+    item_conditions: list[ItemCondition] = ["new"]
+    seller_types: list[SellerType] = ["business"]
+    domain_scope: DomainScope = "general"
     is_active: bool = True
     priority: int = 100
 
@@ -21,7 +27,10 @@ class StoreUpdate(BaseModel):
     name: Optional[str] = None
     slug: Optional[str] = None
     website: Optional[HttpUrl] = None
-    search_type: Optional[SearchType] = None
+    source_type: Optional[SourceType] = None
+    item_conditions: Optional[list[ItemCondition]] = None
+    seller_types: Optional[list[SellerType]] = None
+    domain_scope: Optional[DomainScope] = None
     is_active: Optional[bool] = None
     priority: Optional[int] = None
 

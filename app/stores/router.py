@@ -12,7 +12,7 @@ def list_stores(
     active: Optional[bool] = Query(default=None),
     service: StoreService = Depends(get_store_service),
 ):
-    items = service.list_stores()
+    items = service.seed_if_empty()
     if active is not None:
         items = [x for x in items if x.get("is_active") == active]
     return items
@@ -49,3 +49,4 @@ def delete_store(store_id: int, service: StoreService = Depends(get_store_servic
     if not deleted:
         raise HTTPException(status_code=404, detail="Store not found")
     return None
+

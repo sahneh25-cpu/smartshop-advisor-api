@@ -1,4 +1,4 @@
-﻿from typing import Any, Dict
+from typing import Any, Dict
 import json
 from importlib import import_module
 from unittest.mock import MagicMock
@@ -45,11 +45,11 @@ class AdvisorService:
         if not text:
             return {}
         raw = text.strip()
-        if raw.startswith(chr(96)*3) or raw.startswith("~~~"):
+        if raw.startswith("~~~"):
             rows = raw.splitlines()
-            if rows and (rows[0].startswith(chr(96)*3) or rows[0].startswith("~~~")):
+            if rows and rows[0].startswith("~~~"):
                 rows = rows[1:]
-            if rows and (rows[-1].startswith(chr(96)*3) or rows[-1].startswith("~~~")):
+            if rows and rows[-1].startswith("~~~"):
                 rows = rows[:-1]
             raw = "\n".join(rows).strip()
         try:
@@ -78,7 +78,7 @@ class AdvisorService:
         )
 
         response = self.client.models.generate_content(
-            model=getattr(settings, "GEMINI_MODEL", None) or getattr(settings, "gemini_model", "gemini-1.5-flash"),
+            model=settings.GEMINI_MODEL,
             contents=prompt,
         )
 
@@ -87,7 +87,7 @@ class AdvisorService:
 
         return {
             "recommended_product": None,
-            "analysis": data.get("analysis", ""),
+            "reasoning": data.get("analysis", ""),
             "alternatives": data.get("recommendations", []),
             "next_questions": data.get("next_questions", []),
         }
@@ -95,5 +95,3 @@ class AdvisorService:
 
 def get_advisor_service() -> AdvisorService:
     return AdvisorService()
-
-

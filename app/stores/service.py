@@ -1,6 +1,6 @@
 ﻿from app.stores.repository import StoreRepository
 from app.stores.schemas import StoreCreate, StoreUpdate
-from app.stores.seed_data import SEED_STORES
+from app.stores.store_data import STORE_DATA
 
 
 class StoreService:
@@ -26,8 +26,10 @@ class StoreService:
         current = self.repo.list_all()
         if current:
             return current
-        for item in SEED_STORES:
+
+        for item in STORE_DATA:
             self.repo.create(item)
+
         return self.repo.list_all()
 
 
@@ -36,6 +38,8 @@ _store_service_singleton = None
 
 def get_store_service():
     global _store_service_singleton
+
     if _store_service_singleton is None:
         _store_service_singleton = StoreService(StoreRepository())
+
     return _store_service_singleton

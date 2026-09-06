@@ -4,6 +4,7 @@ from app.schemas.ai import ProductQuestion, ProductQuestionsResponse
 from app.services.ai_provider import AIProvider
 from app.services.category_questions import product_type_label, unanswered_questions
 from app.services.query_understanding_service import QueryUnderstandingService
+from app.services.ai_provider_factory import get_ai_provider
 
 
 class ProductQuestionService:
@@ -52,3 +53,7 @@ class ProductQuestionService:
             product_type=final_product_type,
             questions=questions,
         )
+
+
+def get_product_question_service() -> ProductQuestionService:
+    return ProductQuestionService(get_ai_provider())

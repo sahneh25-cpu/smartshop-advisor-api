@@ -1,0 +1,663 @@
+﻿=== SMARTSHOP AUDIT REPORT ===
+
+
+===== 01-current-branch.txt =====
+
+main
+
+
+===== 01-git-status.txt =====
+
+ M app/api/ai.py
+ M app/main.py
+ M app/schemas/ai.py
+ M app/services/advisor.py
+ M app/services/product_question_service.py
+ M app/stores/router.py
+ M app/stores/schemas.py
+ M app/stores/seed_data.py
+ M app/stores/service.py
+?? _schema_imports.tmp
+?? app/services/advisor.py.bak2
+?? app/services/advisor.py.bak3
+?? app/stores/store_data/
+?? out.json
+
+
+===== 01-last-commits.txt =====
+
+50fd18b chore: remove temporary PR notes file
+6537aa4 docs: add PR notes for stores finalization
+8b59a8e Finalize stores module and stabilize tests
+f85667f feat(agent): add agent session endpoints and test suite
+d09138a fix(ai): resolve syntax errors and ensure fallback in ai_provider
+006382d test(advisor): add comprehensive test suite for services and store search
+f331857 feat(advisor): implement adapter-based architecture for services and providers
+2077996 chore(git): update gitignore to exclude backup and temp files
+5633076 chore(git): enforce consistent line endings
+322e0fd test(api): stabilize ai advisor endpoint tests with dependency override and pytest warning config
+75815d6 Fix ProductQuestion schema (label), stabilize dynamic flow, ensure minimum question count
+f51b392 feat(ai): add dynamic question flow endpoint
+36e2693 Add Streamlit-based UI for product search and AI analysis
+017fa40 Add AI providers, services, and product question tests
+707345f Add CRUD support for product and category flows
+6a0251c Add schemas for search, advise, AI, and product flows
+fad34f8 Add API endpoints for search, advise, and AI routes
+c5f8047 Setup app entrypoint wrapper and ignore .env
+8e9aef9 Refactor shopping recommendations and cleanup database warning
+2b5daf0 feat: add Attribute model, product JSONB attributes, category parent_id
+433aadd Refactor and test CRUD for categories API
+1399f70 Add requirements.txt with psycopg2-binary
+5b84574 Merge branch 'main' of https://github.com/sahneh25-cpu/smartshop-advisor-api
+88b0d27 nitial commit: marthop dvisor ast project
+923ee27 Initial commit
+
+
+===== 02-store-contract-scan.txt =====
+
+### C:\Users\Mohammadi\smartshop-advisor\app\stores\store_data\digikala.py
+digikala.py:3: "slug": "digikala",
+digikala.py:5: "source_type": "marketplace",
+digikala.py:6: "item_conditions": ["new"],
+digikala.py:7: "seller_types": ["business"],
+digikala.py:8: "domain_scope": "general",
+digikala.py:9: "is_active": True,
+digikala.py:10: "priority": 10,
+### C:\Users\Mohammadi\smartshop-advisor\app\stores\store_data\divar.py
+divar.py:3: "slug": "divar",
+divar.py:5: "source_type": "classified",
+divar.py:6: "item_conditions": ["new", "used"],
+divar.py:7: "seller_types": ["individual", "business"],
+divar.py:8: "domain_scope": "general",
+divar.py:9: "is_active": True,
+divar.py:10: "priority": 20,
+### C:\Users\Mohammadi\smartshop-advisor\app\stores\store_data\emalls.py
+emalls.py:3: "slug": "emalls",
+emalls.py:5: "source_type": "aggregator",
+emalls.py:6: "item_conditions": ["new"],
+emalls.py:7: "seller_types": ["business"],
+emalls.py:8: "domain_scope": "general",
+emalls.py:9: "is_active": True,
+emalls.py:10: "priority": 15,
+### C:\Users\Mohammadi\smartshop-advisor\app\stores\store_data\roboeq.py
+roboeq.py:3: "slug": "roboeq",
+roboeq.py:5: "source_type": "retail",
+roboeq.py:6: "item_conditions": ["new"],
+roboeq.py:7: "seller_types": ["business"],
+roboeq.py:8: "domain_scope": "electronics",
+roboeq.py:9: "is_active": True,
+roboeq.py:10: "priority": 25,
+### C:\Users\Mohammadi\smartshop-advisor\app\stores\store_data\technolife.py
+technolife.py:3: "slug": "technolife",
+technolife.py:5: "source_type": "retail",
+technolife.py:6: "item_conditions": ["new"],
+technolife.py:7: "seller_types": ["business"],
+technolife.py:8: "domain_scope": "electronics",
+technolife.py:9: "is_active": True,
+technolife.py:10: "priority": 30,
+### C:\Users\Mohammadi\smartshop-advisor\app\stores\store_data\torob.py
+torob.py:3: "slug": "torob",
+torob.py:5: "source_type": "aggregator",
+torob.py:6: "item_conditions": ["new"],
+torob.py:7: "seller_types": ["business"],
+torob.py:8: "domain_scope": "general",
+torob.py:9: "is_active": True,
+torob.py:10: "priority": 5,
+### C:\Users\Mohammadi\smartshop-advisor\app\stores\store_data\__init__.py
+
+
+===== 03-registry-init-content.txt =====
+
+from app.stores.store_data.digikala import STORE as DIGIKALA
+from app.stores.store_data.torob import STORE as TOROB
+from app.stores.store_data.divar import STORE as DIVAR
+from app.stores.store_data.emalls import STORE as EMALLS
+from app.stores.store_data.technolife import STORE as TECHNOLIFE
+from app.stores.store_data.roboeq import STORE as ROBOEQ
+
+STORE_DATA = [
+    DIGIKALA,
+    TOROB,
+    DIVAR,
+    EMALLS,
+    TECHNOLIFE,
+    ROBOEQ,
+]
+
+
+===== 03-registry-key-lines.txt =====
+
+
+app\stores\store_data\__init__.py:1:from app.stores.store_data.digikala import STORE as DIGIKALA
+app\stores\store_data\__init__.py:2:from app.stores.store_data.torob import STORE as TOROB
+app\stores\store_data\__init__.py:3:from app.stores.store_data.divar import STORE as DIVAR
+app\stores\store_data\__init__.py:4:from app.stores.store_data.emalls import STORE as EMALLS
+app\stores\store_data\__init__.py:5:from app.stores.store_data.technolife import STORE as 
+TECHNOLIFE
+app\stores\store_data\__init__.py:6:from app.stores.store_data.roboeq import STORE as ROBOEQ
+app\stores\store_data\__init__.py:8:STORE_DATA = [
+
+
+
+
+===== 04-migration-scan.txt =====
+
+### .\app\stores\schemas.py
+schemas.py:14: source_type: SourceType = "retail"
+schemas.py:30: source_type: Optional[SourceType] = None
+### .\app\stores\service.py
+### .\app\stores\repository.py
+### .\app\stores\router.py
+### .\app\stores\seed_data.py
+seed_data.py:6: "source_type": "retail",
+seed_data.py:14: "source_type": "aggregator",
+seed_data.py:22: "source_type": "classified",
+seed_data.py:30: "source_type": "aggregator",
+seed_data.py:38: "source_type": "retail",
+
+
+===== 05-classified-normalizer-risk-scan.txt =====
+
+C:\Users\Mohammadi\smartshop-advisor\app\schemas\ai.py:96: Unified offer model for retail + marketplace + classified sources.
+C:\Users\Mohammadi\smartshop-advisor\app\schemas\ai.py:108: # condition-aware fields
+C:\Users\Mohammadi\smartshop-advisor\app\schemas\ai.py:109: condition: Literal["new", "used", "refurbished"] = "new"
+C:\Users\Mohammadi\smartshop-advisor\app\schemas\ai.py:110: source_type: Literal["retail", "aggregator", "classified", "marketplace"] = "retail"
+C:\Users\Mohammadi\smartshop-advisor\app\schemas\ai.py:114: seller_type: Optional[Literal["store", "individual", "unknown"]] = "unknown"
+C:\Users\Mohammadi\smartshop-advisor\app\schemas\ai.py:117: # location/negotiation fields
+C:\Users\Mohammadi\smartshop-advisor\app\schemas\ai.py:118: location: Optional[str] = None
+C:\Users\Mohammadi\smartshop-advisor\app\services\ai_provider.py:80: logger.warning("GEMINI_API_KEY is not set. Falling back to local.")
+C:\Users\Mohammadi\smartshop-advisor\app\services\category_questions.py:243: _q("condition", "نو می‌خوای یا کارکرده هم قبول است؟", _opt("فقط نو", "کارکرده هم باشد", "فرقی ندارد")),
+C:\Users\Mohammadi\smartshop-advisor\app\services\store_search_service.py:67: logger.warning(
+C:\Users\Mohammadi\smartshop-advisor\app\services\store_search_service.py:85: logger.warning("Web fallback failed: %s", exc)
+C:\Users\Mohammadi\smartshop-advisor\app\services\web_source_service.py:70: logger.warning("Tavily error %s: %s", resp.status_code, resp.text[:200])
+C:\Users\Mohammadi\smartshop-advisor\app\services\web_source_service.py:92: logger.warning("Tavily search failed: %s", exc)
+C:\Users\Mohammadi\smartshop-advisor\app\services\web_source_service.py:147: logger.warning("DuckDuckGo lookup failed: %s", exc)
+C:\Users\Mohammadi\smartshop-advisor\app\stores\store_data\digikala.py:6: "item_conditions": ["new"],
+C:\Users\Mohammadi\smartshop-advisor\app\stores\store_data\digikala.py:7: "seller_types": ["business"],
+C:\Users\Mohammadi\smartshop-advisor\app\stores\store_data\divar.py:5: "source_type": "classified",
+C:\Users\Mohammadi\smartshop-advisor\app\stores\store_data\divar.py:6: "item_conditions": ["new", "used"],
+C:\Users\Mohammadi\smartshop-advisor\app\stores\store_data\divar.py:7: "seller_types": ["individual", "business"],
+C:\Users\Mohammadi\smartshop-advisor\app\stores\store_data\emalls.py:6: "item_conditions": ["new"],
+C:\Users\Mohammadi\smartshop-advisor\app\stores\store_data\emalls.py:7: "seller_types": ["business"],
+C:\Users\Mohammadi\smartshop-advisor\app\stores\store_data\roboeq.py:6: "item_conditions": ["new"],
+C:\Users\Mohammadi\smartshop-advisor\app\stores\store_data\roboeq.py:7: "seller_types": ["business"],
+C:\Users\Mohammadi\smartshop-advisor\app\stores\store_data\technolife.py:6: "item_conditions": ["new"],
+C:\Users\Mohammadi\smartshop-advisor\app\stores\store_data\technolife.py:7: "seller_types": ["business"],
+C:\Users\Mohammadi\smartshop-advisor\app\stores\store_data\torob.py:6: "item_conditions": ["new"],
+C:\Users\Mohammadi\smartshop-advisor\app\stores\store_data\torob.py:7: "seller_types": ["business"],
+C:\Users\Mohammadi\smartshop-advisor\app\stores\schemas.py:4: SourceType = Literal["retail", "marketplace", "aggregator", "classified"]
+C:\Users\Mohammadi\smartshop-advisor\app\stores\schemas.py:5: ItemCondition = Literal["new", "used"]
+C:\Users\Mohammadi\smartshop-advisor\app\stores\schemas.py:15: item_conditions: list[ItemCondition] = ["new"]
+C:\Users\Mohammadi\smartshop-advisor\app\stores\schemas.py:16: seller_types: list[SellerType] = ["business"]
+C:\Users\Mohammadi\smartshop-advisor\app\stores\schemas.py:31: item_conditions: Optional[list[ItemCondition]] = None
+C:\Users\Mohammadi\smartshop-advisor\app\stores\schemas.py:32: seller_types: Optional[list[SellerType]] = None
+C:\Users\Mohammadi\smartshop-advisor\app\stores\seed_data.py:22: "source_type": "classified",
+
+
+===== 06-ranking-scan.txt =====
+
+C:\Users\Mohammadi\smartshop-advisor\app\adapters\stores\active\digikala_adapter.py:36: "score": 4.3,
+C:\Users\Mohammadi\smartshop-advisor\app\adapters\stores\active\digikala_adapter.py:45: "score": 4.5,
+C:\Users\Mohammadi\smartshop-advisor\app\adapters\stores\active\torob_adapter.py:32: "score": 4.1,
+C:\Users\Mohammadi\smartshop-advisor\app\adapters\stores\active\torob_adapter.py:41: "score": 4.4,
+C:\Users\Mohammadi\smartshop-advisor\app\adapters\stores\base_store.py:36: "score": float | None,
+C:\Users\Mohammadi\smartshop-advisor\app\api\advise.py:49: ranked, explanation = ai.analyze_and_rank_products(
+C:\Users\Mohammadi\smartshop-advisor\app\api\advise.py:57: ranked = products
+C:\Users\Mohammadi\smartshop-advisor\app\api\advise.py:61: products=ranked[: request.limit],
+C:\Users\Mohammadi\smartshop-advisor\app\api\advise.py:63: ranking_explanation=explanation,
+C:\Users\Mohammadi\smartshop-advisor\app\api\recommendations.py:30: match_score: int = Field(..., ge=0, le=100)
+C:\Users\Mohammadi\smartshop-advisor\app\api\recommendations.py:44: def _score_product(product: Product, req: RecommendationRequest) -> tuple[int, List[str]]:
+C:\Users\Mohammadi\smartshop-advisor\app\api\recommendations.py:45: score = 0
+C:\Users\Mohammadi\smartshop-advisor\app\api\recommendations.py:60: query_score = min(40, len(matched_tokens) * 10)
+C:\Users\Mohammadi\smartshop-advisor\app\api\recommendations.py:61: score += query_score
+C:\Users\Mohammadi\smartshop-advisor\app\api\recommendations.py:70: kw_score = min(30, len(matched_keywords) * 8)
+C:\Users\Mohammadi\smartshop-advisor\app\api\recommendations.py:71: score += kw_score
+C:\Users\Mohammadi\smartshop-advisor\app\api\recommendations.py:80: score += 15
+C:\Users\Mohammadi\smartshop-advisor\app\api\recommendations.py:86: score -= 5
+C:\Users\Mohammadi\smartshop-advisor\app\api\recommendations.py:89: score -= 10
+C:\Users\Mohammadi\smartshop-advisor\app\api\recommendations.py:93: score += 10
+C:\Users\Mohammadi\smartshop-advisor\app\api\recommendations.py:99: score += 10
+C:\Users\Mohammadi\smartshop-advisor\app\api\recommendations.py:105: return max(0, min(100, score)), reasons
+C:\Users\Mohammadi\smartshop-advisor\app\api\recommendations.py:114: f"با امتیاز تطابق {best.match_score}/100. "
+C:\Users\Mohammadi\smartshop-advisor\app\api\recommendations.py:140: score, reasons = _score_product(product, req)
+C:\Users\Mohammadi\smartshop-advisor\app\api\recommendations.py:141: if score <= 0:
+C:\Users\Mohammadi\smartshop-advisor\app\api\recommendations.py:155: match_score=score,
+C:\Users\Mohammadi\smartshop-advisor\app\api\recommendations.py:160: results.sort(key=lambda item: item.match_score, reverse=True)
+C:\Users\Mohammadi\smartshop-advisor\app\api\search.py:14: sort_by: str = Query("best_value", description="ستون مرتبسازی (price, spec_score, best_value)"),
+C:\Users\Mohammadi\smartshop-advisor\app\schemas\advise.py:18: ranking_explanation: Optional[str] = None
+C:\Users\Mohammadi\smartshop-advisor\app\schemas\ai.py:96: Unified offer model for retail + marketplace + classified sources.
+C:\Users\Mohammadi\smartshop-advisor\app\schemas\ai.py:110: source_type: Literal["retail", "aggregator", "classified", "marketplace"] = "retail"
+C:\Users\Mohammadi\smartshop-advisor\app\services\ai.py:15: def analyze_and_rank_products(
+C:\Users\Mohammadi\smartshop-advisor\app\services\ai.py:54: + '{"ranked_indices": [0, 1, 2], "explanation": "توضیح فارسی"}'
+C:\Users\Mohammadi\smartshop-advisor\app\services\ai.py:65: ranked_indices = result.get("ranked_indices", list(range(len(products))))
+C:\Users\Mohammadi\smartshop-advisor\app\services\ai.py:67: ranked_products = [products[i] for i in ranked_indices if i < len(products)]
+C:\Users\Mohammadi\smartshop-advisor\app\services\ai.py:68: return ranked_products, explanation
+C:\Users\Mohammadi\smartshop-advisor\app\services\category_questions.py:118: _q("weight_class", "سبک باشه یا سنگین؟", _opt("سبک", "متوسط", "سنگین")),
+C:\Users\Mohammadi\smartshop-advisor\app\services\category_questions.py:139: _q("weight_class", "سبک باشه یا سنگین؟", _opt("سبک", "متوسط", "سنگین")),
+C:\Users\Mohammadi\smartshop-advisor\app\services\category_questions.py:159: _q("weight", "وزن؟", _opt("خیلی سبک", "متوسط", "فرقی ندارد")),
+C:\Users\Mohammadi\smartshop-advisor\app\services\store_search_service.py:14: def _compute_value_score(self, item: Dict[str, Any]) -> float:
+C:\Users\Mohammadi\smartshop-advisor\app\services\store_search_service.py:15: spec_score = item.get("spec_score")
+C:\Users\Mohammadi\smartshop-advisor\app\services\store_search_service.py:18: spec = float(spec_score)
+C:\Users\Mohammadi\smartshop-advisor\app\services\store_search_service.py:61: item["value_score"] = self._compute_value_score(item)
+C:\Users\Mohammadi\smartshop-advisor\app\services\store_search_service.py:82: item["value_score"] = self._compute_value_score(item)
+C:\Users\Mohammadi\smartshop-advisor\app\services\store_search_service.py:91: key=lambda x: self._sort_key_generic(x, "value_score"),
+C:\Users\Mohammadi\smartshop-advisor\app\services\web_source_service.py:45: "score": None,
+C:\Users\Mohammadi\smartshop-advisor\app\services\web_source_service.py:47: "source_type": "suggested_search",
+C:\Users\Mohammadi\smartshop-advisor\app\services\web_source_service.py:63: "query": f"{query} official retailer {country or ''}".strip(),
+C:\Users\Mohammadi\smartshop-advisor\app\services\web_source_service.py:82: "score": row.get("score"),
+C:\Users\Mohammadi\smartshop-advisor\app\services\web_source_service.py:85: "source_type": "live_web",
+C:\Users\Mohammadi\smartshop-advisor\app\services\web_source_service.py:117: "score": None,
+C:\Users\Mohammadi\smartshop-advisor\app\services\web_source_service.py:120: "source_type": "live_web",
+C:\Users\Mohammadi\smartshop-advisor\app\services\web_source_service.py:138: "score": None,
+C:\Users\Mohammadi\smartshop-advisor\app\services\web_source_service.py:139: "specs": {"source_type": "live_web"},
+C:\Users\Mohammadi\smartshop-advisor\app\stores\store_data\digikala.py:5: "source_type": "marketplace",
+C:\Users\Mohammadi\smartshop-advisor\app\stores\store_data\divar.py:5: "source_type": "classified",
+C:\Users\Mohammadi\smartshop-advisor\app\stores\store_data\emalls.py:5: "source_type": "aggregator",
+C:\Users\Mohammadi\smartshop-advisor\app\stores\store_data\roboeq.py:5: "source_type": "retail",
+C:\Users\Mohammadi\smartshop-advisor\app\stores\store_data\technolife.py:5: "source_type": "retail",
+C:\Users\Mohammadi\smartshop-advisor\app\stores\store_data\torob.py:5: "source_type": "aggregator",
+C:\Users\Mohammadi\smartshop-advisor\app\stores\schemas.py:4: SourceType = Literal["retail", "marketplace", "aggregator", "classified"]
+C:\Users\Mohammadi\smartshop-advisor\app\stores\schemas.py:14: source_type: SourceType = "retail"
+C:\Users\Mohammadi\smartshop-advisor\app\stores\schemas.py:30: source_type: Optional[SourceType] = None
+C:\Users\Mohammadi\smartshop-advisor\app\stores\seed_data.py:6: "source_type": "retail",
+C:\Users\Mohammadi\smartshop-advisor\app\stores\seed_data.py:14: "source_type": "aggregator",
+C:\Users\Mohammadi\smartshop-advisor\app\stores\seed_data.py:22: "source_type": "classified",
+C:\Users\Mohammadi\smartshop-advisor\app\stores\seed_data.py:30: "source_type": "aggregator",
+C:\Users\Mohammadi\smartshop-advisor\app\stores\seed_data.py:38: "source_type": "retail",
+
+
+===== 07-dynamic-questions-optin-scan.txt =====
+
+C:\Users\Mohammadi\smartshop-advisor\app\api\endpoints\category.py:5: from sqlalchemy.orm import Session
+C:\Users\Mohammadi\smartshop-advisor\app\api\endpoints\category.py:20: db: Session = Depends(deps.get_db),
+C:\Users\Mohammadi\smartshop-advisor\app\api\endpoints\category.py:32: db: Session = Depends(deps.get_db),
+C:\Users\Mohammadi\smartshop-advisor\app\api\endpoints\category.py:46: db: Session = Depends(deps.get_db),
+C:\Users\Mohammadi\smartshop-advisor\app\api\endpoints\category.py:64: db: Session = Depends(deps.get_db),
+C:\Users\Mohammadi\smartshop-advisor\app\api\endpoints\category.py:84: db: Session = Depends(deps.get_db),
+C:\Users\Mohammadi\smartshop-advisor\app\api\advise.py:2: from sqlalchemy.orm import Session
+C:\Users\Mohammadi\smartshop-advisor\app\api\advise.py:4: from app.core.database import SessionLocal
+C:\Users\Mohammadi\smartshop-advisor\app\api\advise.py:14: db = SessionLocal()
+C:\Users\Mohammadi\smartshop-advisor\app\api\agent.py:6: StartSessionRequest,
+C:\Users\Mohammadi\smartshop-advisor\app\api\agent.py:7: StartSessionResponse,
+C:\Users\Mohammadi\smartshop-advisor\app\api\agent.py:8: NextSessionRequest,
+C:\Users\Mohammadi\smartshop-advisor\app\api\agent.py:9: NextSessionResponse,
+C:\Users\Mohammadi\smartshop-advisor\app\api\agent.py:14: _sessions: dict[str, dict[str, object]] = {}
+C:\Users\Mohammadi\smartshop-advisor\app\api\agent.py:17: @router.post("/session/start", response_model=StartSessionResponse)
+C:\Users\Mohammadi\smartshop-advisor\app\api\agent.py:18: async def start_session(payload: StartSessionRequest) -> StartSessionResponse:
+C:\Users\Mohammadi\smartshop-advisor\app\api\agent.py:19: session_id = str(uuid4())
+C:\Users\Mohammadi\smartshop-advisor\app\api\agent.py:20: _sessions[session_id] = {
+C:\Users\Mohammadi\smartshop-advisor\app\api\agent.py:25: return StartSessionResponse(
+C:\Users\Mohammadi\smartshop-advisor\app\api\agent.py:26: session_id=session_id,
+C:\Users\Mohammadi\smartshop-advisor\app\api\agent.py:32: @router.post("/session/next", response_model=NextSessionResponse)
+C:\Users\Mohammadi\smartshop-advisor\app\api\agent.py:33: async def next_session(payload: NextSessionRequest) -> NextSessionResponse:
+C:\Users\Mohammadi\smartshop-advisor\app\api\agent.py:34: session = _sessions.get(payload.session_id)
+C:\Users\Mohammadi\smartshop-advisor\app\api\agent.py:35: if not session:
+C:\Users\Mohammadi\smartshop-advisor\app\api\agent.py:36: raise HTTPException(status_code=404, detail="Session not found")
+C:\Users\Mohammadi\smartshop-advisor\app\api\agent.py:38: session["answers"].append(payload.user_answer)
+C:\Users\Mohammadi\smartshop-advisor\app\api\agent.py:39: session["step"] = int(session["step"]) + 1
+C:\Users\Mohammadi\smartshop-advisor\app\api\agent.py:41: if session["step"] == 2:
+C:\Users\Mohammadi\smartshop-advisor\app\api\agent.py:42: return NextSessionResponse(
+C:\Users\Mohammadi\smartshop-advisor\app\api\agent.py:43: session_id=payload.session_id,
+C:\Users\Mohammadi\smartshop-advisor\app\api\agent.py:48: return NextSessionResponse(
+C:\Users\Mohammadi\smartshop-advisor\app\api\agent.py:49: session_id=payload.session_id,
+C:\Users\Mohammadi\smartshop-advisor\app\api\deps.py:2: from app.database import SessionLocal
+C:\Users\Mohammadi\smartshop-advisor\app\api\deps.py:6: db = SessionLocal()
+C:\Users\Mohammadi\smartshop-advisor\app\api\recommendations.py:6: from sqlalchemy.orm import Session
+C:\Users\Mohammadi\smartshop-advisor\app\api\recommendations.py:127: db: Session = Depends(get_db),
+C:\Users\Mohammadi\smartshop-advisor\app\api\routes.py:2: from sqlalchemy.orm import Session
+C:\Users\Mohammadi\smartshop-advisor\app\api\routes.py:59: def create_category(data: CategoryCreate, db: Session = Depends(get_db)):
+C:\Users\Mohammadi\smartshop-advisor\app\api\routes.py:67: def list_categories(db: Session = Depends(get_db)):
+C:\Users\Mohammadi\smartshop-advisor\app\api\routes.py:71: def get_category(cat_id: int, db: Session = Depends(get_db)):
+C:\Users\Mohammadi\smartshop-advisor\app\api\routes.py:78: def update_category(cat_id: int, data: CategoryUpdate, db: Session = Depends(get_db)):
+C:\Users\Mohammadi\smartshop-advisor\app\api\routes.py:89: def delete_category(cat_id: int, db: Session = Depends(get_db)):
+C:\Users\Mohammadi\smartshop-advisor\app\api\routes.py:101: def create_product(data: ProductCreate, db: Session = Depends(get_db)):
+C:\Users\Mohammadi\smartshop-advisor\app\api\routes.py:116: db: Session = Depends(get_db)
+C:\Users\Mohammadi\smartshop-advisor\app\api\routes.py:135: def get_product(product_id: int, db: Session = Depends(get_db)):
+C:\Users\Mohammadi\smartshop-advisor\app\api\routes.py:142: def update_product(product_id: int, data: ProductUpdate, db: Session = Depends(get_db)):
+C:\Users\Mohammadi\smartshop-advisor\app\api\routes.py:153: def delete_product(product_id: int, db: Session = Depends(get_db)):
+C:\Users\Mohammadi\smartshop-advisor\app\core\database.py:3: from sqlalchemy.orm import sessionmaker
+C:\Users\Mohammadi\smartshop-advisor\app\core\database.py:12: SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+C:\Users\Mohammadi\smartshop-advisor\app\core\database.py:16: db = SessionLocal()
+C:\Users\Mohammadi\smartshop-advisor\app\crud\category.py:3: from sqlalchemy.orm import Session
+C:\Users\Mohammadi\smartshop-advisor\app\crud\category.py:8: def get(db: Session, category_id: int):
+C:\Users\Mohammadi\smartshop-advisor\app\crud\category.py:12: def get_all(db: Session, skip: int = 0, limit: int = 100):
+C:\Users\Mohammadi\smartshop-advisor\app\crud\category.py:16: def create(db: Session, category: CategoryCreate):
+C:\Users\Mohammadi\smartshop-advisor\app\crud\category.py:28: def update(db: Session, *, db_obj: Category, obj_in: CategoryUpdate):
+C:\Users\Mohammadi\smartshop-advisor\app\crud\category.py:41: def remove(db: Session, *, id: int):
+C:\Users\Mohammadi\smartshop-advisor\app\crud\product.py:1: from sqlalchemy.orm import Session
+C:\Users\Mohammadi\smartshop-advisor\app\crud\product.py:7: def get(self, db: Session, product_id: int):
+C:\Users\Mohammadi\smartshop-advisor\app\crud\product.py:10: def get_multi(self, db: Session, *, skip=0, limit=100,
+C:\Users\Mohammadi\smartshop-advisor\app\crud\product.py:24: def create(self, db: Session, *, obj_in: ProductCreate):
+C:\Users\Mohammadi\smartshop-advisor\app\crud\product.py:31: def update(self, db: Session, *, db_obj: Product, obj_in: ProductUpdate):
+C:\Users\Mohammadi\smartshop-advisor\app\crud\product.py:38: def remove(self, db: Session, *, product_id: int):
+C:\Users\Mohammadi\smartshop-advisor\app\routers\categories.py:2: from sqlalchemy.orm import Session
+C:\Users\Mohammadi\smartshop-advisor\app\routers\categories.py:36: def create_category(category: CategoryCreate, db: Session = Depends(get_db)):
+C:\Users\Mohammadi\smartshop-advisor\app\routers\categories.py:45: def get_categories(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
+C:\Users\Mohammadi\smartshop-advisor\app\routers\categories.py:52: def get_category(category_id: int, db: Session = Depends(get_db)):
+C:\Users\Mohammadi\smartshop-advisor\app\routers\categories.py:60: def update_category(category_id: int, category: CategoryUpdate, db: Session = Depends(get_db)):
+C:\Users\Mohammadi\smartshop-advisor\app\routers\categories.py:75: def delete_category(category_id: int, db: Session = Depends(get_db)):
+C:\Users\Mohammadi\smartshop-advisor\app\routers\category.py:2: from sqlalchemy.orm import Session
+C:\Users\Mohammadi\smartshop-advisor\app\routers\category.py:12: def list_categories(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
+C:\Users\Mohammadi\smartshop-advisor\app\routers\category.py:16: def get_category(category_id: int, db: Session = Depends(get_db)):
+C:\Users\Mohammadi\smartshop-advisor\app\routers\category.py:23: def create_category(category: CategoryCreate, db: Session = Depends(get_db)):
+C:\Users\Mohammadi\smartshop-advisor\app\routers\category.py:27: def update_category(category_id: int, category: CategoryUpdate, db: Session = Depends(get_db)):
+C:\Users\Mohammadi\smartshop-advisor\app\routers\category.py:34: def delete_category(category_id: int, db: Session = Depends(get_db)):
+C:\Users\Mohammadi\smartshop-advisor\app\schemas\agent.py:4: class StartSessionRequest(BaseModel):
+C:\Users\Mohammadi\smartshop-advisor\app\schemas\agent.py:8: class StartSessionResponse(BaseModel):
+C:\Users\Mohammadi\smartshop-advisor\app\schemas\agent.py:9: session_id: str
+C:\Users\Mohammadi\smartshop-advisor\app\schemas\agent.py:14: class NextSessionRequest(BaseModel):
+C:\Users\Mohammadi\smartshop-advisor\app\schemas\agent.py:15: session_id: str
+C:\Users\Mohammadi\smartshop-advisor\app\schemas\agent.py:19: class NextSessionResponse(BaseModel):
+C:\Users\Mohammadi\smartshop-advisor\app\schemas\agent.py:20: session_id: str
+C:\Users\Mohammadi\smartshop-advisor\app\schemas\ai.py:96: Unified offer model for retail + marketplace + classified sources.
+C:\Users\Mohammadi\smartshop-advisor\app\schemas\ai.py:110: source_type: Literal["retail", "aggregator", "classified", "marketplace"] = "retail"
+C:\Users\Mohammadi\smartshop-advisor\app\services\query_understanding_service.py:60: if "brand_preference" not in answers and "brand" not in extracted_features:
+C:\Users\Mohammadi\smartshop-advisor\app\services\query_understanding_service.py:61: missing_slots.append("brand_preference")
+C:\Users\Mohammadi\smartshop-advisor\app\stores\store_data\divar.py:2: "name": "Divar",
+C:\Users\Mohammadi\smartshop-advisor\app\stores\store_data\divar.py:3: "slug": "divar",
+C:\Users\Mohammadi\smartshop-advisor\app\stores\store_data\divar.py:4: "website": "https://divar.ir",
+C:\Users\Mohammadi\smartshop-advisor\app\stores\store_data\divar.py:5: "source_type": "classified",
+C:\Users\Mohammadi\smartshop-advisor\app\stores\store_data\__init__.py:3: from app.stores.store_data.divar import STORE as DIVAR
+C:\Users\Mohammadi\smartshop-advisor\app\stores\store_data\__init__.py:11: DIVAR,
+C:\Users\Mohammadi\smartshop-advisor\app\stores\schemas.py:4: SourceType = Literal["retail", "marketplace", "aggregator", "classified"]
+C:\Users\Mohammadi\smartshop-advisor\app\stores\seed_data.py:19: "name": "Divar",
+C:\Users\Mohammadi\smartshop-advisor\app\stores\seed_data.py:20: "slug": "divar",
+C:\Users\Mohammadi\smartshop-advisor\app\stores\seed_data.py:21: "website": "https://divar.ir",
+C:\Users\Mohammadi\smartshop-advisor\app\stores\seed_data.py:22: "source_type": "classified",
+
+
+===== 08-async-feature-flag-scan.txt =====
+
+C:\Users\Mohammadi\smartshop-advisor\app\adapters\stores\archive\digikala_legacy.py:11: async def search(
+C:\Users\Mohammadi\smartshop-advisor\app\adapters\stores\archive\digikala_legacy.py:18: async with httpx.AsyncClient(timeout=25.0) as client:
+C:\Users\Mohammadi\smartshop-advisor\app\adapters\stores\archive\torob_legacy.py:16: async def search(self, query: str, budget: float | None = None, limit: int = 10) -> list[ProductResult]:
+C:\Users\Mohammadi\smartshop-advisor\app\adapters\stores\archive\torob_legacy.py:19: async with httpx.AsyncClient(timeout=10) as client:
+C:\Users\Mohammadi\smartshop-advisor\app\api\advise.py:7: import asyncio
+C:\Users\Mohammadi\smartshop-advisor\app\api\advise.py:22: async def get_ai_recommendations(request: AdviseRequest):
+C:\Users\Mohammadi\smartshop-advisor\app\api\advise.py:29: results = await asyncio.gather(*tasks, return_exceptions=True)
+C:\Users\Mohammadi\smartshop-advisor\app\api\agent.py:18: async def start_session(payload: StartSessionRequest) -> StartSessionResponse:
+C:\Users\Mohammadi\smartshop-advisor\app\api\agent.py:33: async def next_session(payload: NextSessionRequest) -> NextSessionResponse:
+C:\Users\Mohammadi\smartshop-advisor\app\api\search.py:9: async def search_products(
+C:\Users\Mohammadi\smartshop-advisor\app\providers\base.py:23: async def search(self, query: str, limit: int = 10, budget: Optional[float] = None) -> list[ProductResult]:
+C:\Users\Mohammadi\smartshop-advisor\app\schemas\ai.py:110: source_type: Literal["retail", "aggregator", "classified", "marketplace"] = "retail"
+C:\Users\Mohammadi\smartshop-advisor\app\services\advisor.py:60: async def recommend(self, advisor_input) -> Dict[str, Any]:
+C:\Users\Mohammadi\smartshop-advisor\app\stores\store_data\emalls.py:5: "source_type": "aggregator",
+C:\Users\Mohammadi\smartshop-advisor\app\stores\store_data\torob.py:5: "source_type": "aggregator",
+C:\Users\Mohammadi\smartshop-advisor\app\stores\schemas.py:4: SourceType = Literal["retail", "marketplace", "aggregator", "classified"]
+C:\Users\Mohammadi\smartshop-advisor\app\stores\seed_data.py:14: "source_type": "aggregator",
+C:\Users\Mohammadi\smartshop-advisor\app\stores\seed_data.py:30: "source_type": "aggregator",
+C:\Users\Mohammadi\smartshop-advisor\app\main.py:1: from contextlib import asynccontextmanager
+C:\Users\Mohammadi\smartshop-advisor\app\main.py:22: @asynccontextmanager
+C:\Users\Mohammadi\smartshop-advisor\app\main.py:23: async def lifespan(app: FastAPI):
+
+
+===== 09-pytest-collect.txt =====
+
+tests/services/test_advisor_service.py::test_recommend_success
+tests/services/test_advisor_service.py::test_safe_parse_json_with_markdown
+tests/test_imports.py::test_app_import
+tests/test_store_loader_smoke.py::test_store_loader_returns_adapters
+tests/test_store_loader_smoke.py::test_digikala_adapter_search_shape
+tests/test_store_loader_smoke.py::test_torob_adapter_search_shape
+tests/test_store_search_service.py::test_search_all_returns_aggregated_results
+tests/test_store_search_service.py::test_search_all_respects_limit_per_store
+tests/test_store_search_service_default_sort_value.py::test_default_sort_is_best_value_desc
+tests/test_store_search_service_dynamic_sort.py::test_dynamic_sort_by_price_desc
+tests/test_store_search_service_dynamic_sort.py::test_dynamic_sort_by_rating_desc
+tests/test_store_search_service_dynamic_sort.py::test_dynamic_sort_by_spec_score_desc
+tests/test_store_search_service_resilience.py::test_search_all_continues_when_one_adapter_fails
+
+=================================== ERRORS ====================================
+______________ ERROR collecting tests/api/test_agent_session.py _______________
+ImportError while importing test module 'C:\Users\Mohammadi\smartshop-advisor\tests\api\test_agent_session.py'.
+Hint: make sure your test modules/packages have valid Python names.
+Traceback:
+..\AppData\Local\Programs\Python\Python314\Lib\importlib\__init__.py:88: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+tests\api\test_agent_session.py:2: in <module>
+    from app.main import app
+app\main.py:8: in <module>
+    from app.api.ai import router as ai_router
+app\api\ai.py:3: in <module>
+    from app.services.ai import AIService, get_ai_service
+E   ImportError: cannot import name 'AIService' from 'app.services.ai' (C:\Users\Mohammadi\smartshop-advisor\app\services\ai.py)
+___________ ERROR collecting tests/api/test_ai_advisor_endpoint.py ____________
+ImportError while importing test module 'C:\Users\Mohammadi\smartshop-advisor\tests\api\test_ai_advisor_endpoint.py'.
+Hint: make sure your test modules/packages have valid Python names.
+Traceback:
+..\AppData\Local\Programs\Python\Python314\Lib\importlib\__init__.py:88: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+tests\api\test_ai_advisor_endpoint.py:3: in <module>
+    from app.main import app
+app\main.py:8: in <module>
+    from app.api.ai import router as ai_router
+app\api\ai.py:3: in <module>
+    from app.services.ai import AIService, get_ai_service
+E   ImportError: cannot import name 'AIService' from 'app.services.ai' (C:\Users\Mohammadi\smartshop-advisor\app\services\ai.py)
+________________ ERROR collecting tests/api/test_stores_api.py ________________
+ImportError while importing test module 'C:\Users\Mohammadi\smartshop-advisor\tests\api\test_stores_api.py'.
+Hint: make sure your test modules/packages have valid Python names.
+Traceback:
+..\AppData\Local\Programs\Python\Python314\Lib\importlib\__init__.py:88: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+tests\api\test_stores_api.py:2: in <module>
+    from app.main import app
+app\main.py:8: in <module>
+    from app.api.ai import router as ai_router
+app\api\ai.py:3: in <module>
+    from app.services.ai import AIService, get_ai_service
+E   ImportError: cannot import name 'AIService' from 'app.services.ai' (C:\Users\Mohammadi\smartshop-advisor\app\services\ai.py)
+____________ ERROR collecting tests/test_dynamic_question_flow.py _____________
+ImportError while importing test module 'C:\Users\Mohammadi\smartshop-advisor\tests\test_dynamic_question_flow.py'.
+Hint: make sure your test modules/packages have valid Python names.
+Traceback:
+..\AppData\Local\Programs\Python\Python314\Lib\importlib\__init__.py:88: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+tests\test_dynamic_question_flow.py:2: in <module>
+    from app.main import app
+app\main.py:8: in <module>
+    from app.api.ai import router as ai_router
+app\api\ai.py:3: in <module>
+    from app.services.ai import AIService, get_ai_service
+E   ImportError: cannot import name 'AIService' from 'app.services.ai' (C:\Users\Mohammadi\smartshop-advisor\app\services\ai.py)
+______________ ERROR collecting tests/test_product_questions.py _______________
+ImportError while importing test module 'C:\Users\Mohammadi\smartshop-advisor\tests\test_product_questions.py'.
+Hint: make sure your test modules/packages have valid Python names.
+Traceback:
+..\AppData\Local\Programs\Python\Python314\Lib\importlib\__init__.py:88: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+tests\test_product_questions.py:2: in <module>
+    from app.main import app
+app\main.py:8: in <module>
+    from app.api.ai import router as ai_router
+app\api\ai.py:3: in <module>
+    from app.services.ai import AIService, get_ai_service
+E   ImportError: cannot import name 'AIService' from 'app.services.ai' (C:\Users\Mohammadi\smartshop-advisor\app\services\ai.py)
+============================== warnings summary ===============================
+venv\Lib\site-packages\google\genai\types.py:42
+  C:\Users\Mohammadi\smartshop-advisor\venv\Lib\site-packages\google\genai\types.py:42: DeprecationWarning: '_UnionGenericAlias' is deprecated and slated for removal in Python 3.17
+    VersionedUnionType = Union[builtin_types.UnionType, _UnionGenericAlias]
+
+venv\Lib\site-packages\fastapi\testclient.py:1
+  C:\Users\Mohammadi\smartshop-advisor\venv\Lib\site-packages\fastapi\testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+    from starlette.testclient import TestClient as TestClient  # noqa
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ===========================
+ERROR tests/api/test_agent_session.py
+ERROR tests/api/test_ai_advisor_endpoint.py
+ERROR tests/api/test_stores_api.py
+ERROR tests/test_dynamic_question_flow.py
+ERROR tests/test_product_questions.py
+!!!!!!!!!!!!!!!!!!! Interrupted: 5 errors during collection !!!!!!!!!!!!!!!!!!!
+13 tests collected, 5 errors in 11.79s
+
+
+===== 09-pytest-full.txt =====
+
+
+=================================== ERRORS ====================================
+______________ ERROR collecting tests/api/test_agent_session.py _______________
+ImportError while importing test module 'C:\Users\Mohammadi\smartshop-advisor\tests\api\test_agent_session.py'.
+Hint: make sure your test modules/packages have valid Python names.
+Traceback:
+..\AppData\Local\Programs\Python\Python314\Lib\importlib\__init__.py:88: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+tests\api\test_agent_session.py:2: in <module>
+    from app.main import app
+app\main.py:8: in <module>
+    from app.api.ai import router as ai_router
+app\api\ai.py:3: in <module>
+    from app.services.ai import AIService, get_ai_service
+E   ImportError: cannot import name 'AIService' from 'app.services.ai' (C:\Users\Mohammadi\smartshop-advisor\app\services\ai.py)
+___________ ERROR collecting tests/api/test_ai_advisor_endpoint.py ____________
+ImportError while importing test module 'C:\Users\Mohammadi\smartshop-advisor\tests\api\test_ai_advisor_endpoint.py'.
+Hint: make sure your test modules/packages have valid Python names.
+Traceback:
+..\AppData\Local\Programs\Python\Python314\Lib\importlib\__init__.py:88: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+tests\api\test_ai_advisor_endpoint.py:3: in <module>
+    from app.main import app
+app\main.py:8: in <module>
+    from app.api.ai import router as ai_router
+app\api\ai.py:3: in <module>
+    from app.services.ai import AIService, get_ai_service
+E   ImportError: cannot import name 'AIService' from 'app.services.ai' (C:\Users\Mohammadi\smartshop-advisor\app\services\ai.py)
+________________ ERROR collecting tests/api/test_stores_api.py ________________
+ImportError while importing test module 'C:\Users\Mohammadi\smartshop-advisor\tests\api\test_stores_api.py'.
+Hint: make sure your test modules/packages have valid Python names.
+Traceback:
+..\AppData\Local\Programs\Python\Python314\Lib\importlib\__init__.py:88: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+tests\api\test_stores_api.py:2: in <module>
+    from app.main import app
+app\main.py:8: in <module>
+    from app.api.ai import router as ai_router
+app\api\ai.py:3: in <module>
+    from app.services.ai import AIService, get_ai_service
+E   ImportError: cannot import name 'AIService' from 'app.services.ai' (C:\Users\Mohammadi\smartshop-advisor\app\services\ai.py)
+____________ ERROR collecting tests/test_dynamic_question_flow.py _____________
+ImportError while importing test module 'C:\Users\Mohammadi\smartshop-advisor\tests\test_dynamic_question_flow.py'.
+Hint: make sure your test modules/packages have valid Python names.
+Traceback:
+..\AppData\Local\Programs\Python\Python314\Lib\importlib\__init__.py:88: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+tests\test_dynamic_question_flow.py:2: in <module>
+    from app.main import app
+app\main.py:8: in <module>
+    from app.api.ai import router as ai_router
+app\api\ai.py:3: in <module>
+    from app.services.ai import AIService, get_ai_service
+E   ImportError: cannot import name 'AIService' from 'app.services.ai' (C:\Users\Mohammadi\smartshop-advisor\app\services\ai.py)
+______________ ERROR collecting tests/test_product_questions.py _______________
+ImportError while importing test module 'C:\Users\Mohammadi\smartshop-advisor\tests\test_product_questions.py'.
+Hint: make sure your test modules/packages have valid Python names.
+Traceback:
+..\AppData\Local\Programs\Python\Python314\Lib\importlib\__init__.py:88: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+tests\test_product_questions.py:2: in <module>
+    from app.main import app
+app\main.py:8: in <module>
+    from app.api.ai import router as ai_router
+app\api\ai.py:3: in <module>
+    from app.services.ai import AIService, get_ai_service
+E   ImportError: cannot import name 'AIService' from 'app.services.ai' (C:\Users\Mohammadi\smartshop-advisor\app\services\ai.py)
+============================== warnings summary ===============================
+venv\Lib\site-packages\google\genai\types.py:42
+  C:\Users\Mohammadi\smartshop-advisor\venv\Lib\site-packages\google\genai\types.py:42: DeprecationWarning: '_UnionGenericAlias' is deprecated and slated for removal in Python 3.17
+    VersionedUnionType = Union[builtin_types.UnionType, _UnionGenericAlias]
+
+venv\Lib\site-packages\fastapi\testclient.py:1
+  C:\Users\Mohammadi\smartshop-advisor\venv\Lib\site-packages\fastapi\testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+    from starlette.testclient import TestClient as TestClient  # noqa
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ===========================
+ERROR tests/api/test_agent_session.py
+ERROR tests/api/test_ai_advisor_endpoint.py
+ERROR tests/api/test_stores_api.py
+ERROR tests/test_dynamic_question_flow.py
+ERROR tests/test_product_questions.py
+!!!!!!!!!!!!!!!!!!! Interrupted: 5 errors during collection !!!!!!!!!!!!!!!!!!!
+2 warnings, 5 errors in 13.63s
+
+
+===== 10-targeted-tests.txt =====
+
+MISSING: .\tests\test_store_registry.py
+MISSING: .\tests\test_source_type_migration.py
+MISSING: .\tests\test_classified_ranking.py
+
+=================================== ERRORS ====================================
+____________ ERROR collecting tests/test_dynamic_question_flow.py _____________
+ImportError while importing test module 'C:\Users\Mohammadi\smartshop-advisor\tests\test_dynamic_question_flow.py'.
+Hint: make sure your test modules/packages have valid Python names.
+Traceback:
+..\AppData\Local\Programs\Python\Python314\Lib\importlib\__init__.py:88: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+tests\test_dynamic_question_flow.py:2: in <module>
+    from app.main import app
+app\main.py:8: in <module>
+    from app.api.ai import router as ai_router
+app\api\ai.py:3: in <module>
+    from app.services.ai import AIService, get_ai_service
+E   ImportError: cannot import name 'AIService' from 'app.services.ai' (C:\Users\Mohammadi\smartshop-advisor\app\services\ai.py)
+============================== warnings summary ===============================
+venv\Lib\site-packages\fastapi\testclient.py:1
+  C:\Users\Mohammadi\smartshop-advisor\venv\Lib\site-packages\fastapi\testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+    from starlette.testclient import TestClient as TestClient  # noqa
+
+venv\Lib\site-packages\google\genai\types.py:42
+  C:\Users\Mohammadi\smartshop-advisor\venv\Lib\site-packages\google\genai\types.py:42: DeprecationWarning: '_UnionGenericAlias' is deprecated and slated for removal in Python 3.17
+    VersionedUnionType = Union[builtin_types.UnionType, _UnionGenericAlias]
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ===========================
+ERROR tests/test_dynamic_question_flow.py
+!!!!!!!!!!!!!!!!!!! Interrupted: 1 error during collection !!!!!!!!!!!!!!!!!!!!
+2 warnings, 1 error in 10.07s
+
+=================================== ERRORS ====================================
+___________ ERROR collecting tests/api/test_ai_advisor_endpoint.py ____________
+ImportError while importing test module 'C:\Users\Mohammadi\smartshop-advisor\tests\api\test_ai_advisor_endpoint.py'.
+Hint: make sure your test modules/packages have valid Python names.
+Traceback:
+..\AppData\Local\Programs\Python\Python314\Lib\importlib\__init__.py:88: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+tests\api\test_ai_advisor_endpoint.py:3: in <module>
+    from app.main import app
+app\main.py:8: in <module>
+    from app.api.ai import router as ai_router
+app\api\ai.py:3: in <module>
+    from app.services.ai import AIService, get_ai_service
+E   ImportError: cannot import name 'AIService' from 'app.services.ai' (C:\Users\Mohammadi\smartshop-advisor\app\services\ai.py)
+============================== warnings summary ===============================
+venv\Lib\site-packages\fastapi\testclient.py:1
+  C:\Users\Mohammadi\smartshop-advisor\venv\Lib\site-packages\fastapi\testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+    from starlette.testclient import TestClient as TestClient  # noqa
+
+venv\Lib\site-packages\google\genai\types.py:42
+  C:\Users\Mohammadi\smartshop-advisor\venv\Lib\site-packages\google\genai\types.py:42: DeprecationWarning: '_UnionGenericAlias' is deprecated and slated for removal in Python 3.17
+    VersionedUnionType = Union[builtin_types.UnionType, _UnionGenericAlias]
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ===========================
+ERROR tests/api/test_ai_advisor_endpoint.py
+!!!!!!!!!!!!!!!!!!! Interrupted: 1 error during collection !!!!!!!!!!!!!!!!!!!!
+2 warnings, 1 error in 10.08s
+
+
+===== FINAL_REPORT_RAW.txt =====
+

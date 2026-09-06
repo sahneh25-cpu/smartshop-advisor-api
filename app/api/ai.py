@@ -1,75 +1,53 @@
-import os
+﻿from typing import Any, Dict, List
 from fastapi import APIRouter, Depends
+from app.schemas.ai import AdvisorInput, AdvisorResponse
 
-from app.schemas.ai import (
-    AdvisorRequest,
-    AdvisorResponse,
-    BrandListRequest,
-    BrandListResponse,
-    DynamicQuestionFlowRequest,
-    DynamicQuestionsRequest,
-    ProductQuestionsRequest,
-    ProductQuestionsResponse,
-)
-from app.services.category_questions import brands_for, product_type_label
-from app.services.advisor import AdvisorService
-from app.services.ai_provider_factory import get_ai_provider
-from app.services.product_question_service import ProductQuestionService
+router = APIRouter(prefix="/ai", tags=["AI"])
 
-router = APIRouter(prefix="/api/v1/ai", tags=["AI"])
+def get_advisor_service():
+    from app.services.ai import AdvisorService
+    return AdvisorService()
 
-
-def get_product_question_service() -> ProductQuestionService:
-    provider = get_ai_provider()
-    return ProductQuestionService(provider=provider)
-
-
-def get_advisor_service() -> AdvisorService:
-    provider_name = os.getenv("AI_PROVIDER", "local")
-    provider = get_ai_provider(provider_name)
-    return AdvisorService(provider)
-
-
-@router.post("/dynamic-questions", response_model=ProductQuestionsResponse)
-def get_dynamic_questions(
-    request: DynamicQuestionsRequest,
-    service: ProductQuestionService = Depends(get_product_question_service),
-):
-    return service.get_dynamic_questions(
-        user_query=request.user_query,
-        current_answers=request.current_answers,
-    )
-
-
-@router.post("/dynamic-question-flow", response_model=ProductQuestionsResponse)
-def dynamic_question_flow(
-    request: DynamicQuestionFlowRequest,
-    service: ProductQuestionService = Depends(get_product_question_service),
-):
-    return service.get_dynamic_questions(
-        user_query=request.user_query,
-        current_answers=request.answers,
-    )
-
-
-@router.post("/product-questions", response_model=ProductQuestionsResponse)
-def product_questions(
-    request: ProductQuestionsRequest,
-    service: ProductQuestionService = Depends(get_product_question_service),
-):
-    name = (request.product_name or request.user_query or "").strip()
-    return service.get_product_questions(name)
-
-
-@router.post("/brands", response_model=BrandListResponse)
-def list_brands(request: BrandListRequest) -> BrandListResponse:
-    label = product_type_label(request.user_query)
-    return BrandListResponse(product_type=label, brands=brands_for(request.user_query))
-
+def get_ai_service():
+    from app.services.ai import GeminiService
+    return GeminiService()
 
 @router.post("/advisor/recommend", response_model=AdvisorResponse)
-async def advisor_recommend(
-    request: AdvisorRequest,
-    service: AdvisorService = Depends(get_advisor_service),
-) -> AdvisorResponse:
-    return await service.recommend(request)
+async def advisor_recommend(payload: AdvisorInput, advisor_service=Depends(get_advisor_service)):
+    return await advisor_service.recommend(payload)
+
+@router.post("/dynamic-question-flow")
+async def dynamic_question_flow(payload: Dict[str, Any]):
+    user_query = (payload.get("user_query") or "").strip()
+    q = user_query.replace("\u200c", " ").lower()
+
+    if ("لپ تاپ" in q) or ("لپتاپ" in q):
+        product_type = "لپ تاپ"
+    elif ("گوشی" in q) or ("موبایل" in q):
+        product_type = "گوشی موبایل"
+    else:
+        product_type = "محصول"
+
+    questions: List[Dict[str, Any]] = [
+        {"key": "budget", "question": "بودجه شما حدوداً چقدر است"},
+        {"key": "brand_preference", "question": "برند مورد علاقهتان چیست"},
+        {"key": "usage", "question": "کاربری اصلی شما چیست"},
+    ]
+
+    budget_markers = ["بودجه", "میلیون", "تومان", "million", "budget", "قیمت"]
+    if any(m in q for m in budget_markers):
+        questions = [x for x in questions if x["key"] != "budget"]
+
+    return {"product_type": product_type, "questions": questions}
+
+@router.post("/product-questions")
+async def product_questions(payload: Dict[str, Any]):
+    product_type = payload.get("product_type") or payload.get("product_name") or "محصول"
+    return {
+        "product_type": product_type,
+        "questions": [
+            {"key": "budget", "question": "بودجه شما چقدر است"},
+            {"key": "priority", "question": "مهمترین ویگی مدنظر شما چیست"},
+            {"key": "brand_preference", "question": "ترجیح برند شما چیست"},
+        ],
+    }

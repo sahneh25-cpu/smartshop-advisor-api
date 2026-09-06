@@ -1,5 +1,6 @@
-from typing import Any, Dict, List, Optional, Union
+﻿from __future__ import annotations
 
+from typing import Any, Dict, List, Literal, Optional
 from pydantic import BaseModel, ConfigDict, Field, model_validator
 
 
@@ -74,6 +75,12 @@ class ProductQuestionsResponse(BaseModel):
     questions: List[ProductQuestion] = Field(default_factory=list)
 
 
+class DynamicQuestionFlowResponse(BaseModel):
+    product_type: Optional[str] = None
+    next_questions: List[ProductQuestion] = Field(default_factory=list)
+    is_complete: bool = False
+
+
 class BrandListRequest(BaseModel):
     user_query: str
     country: Optional[str] = None
@@ -85,11 +92,39 @@ class BrandListResponse(BaseModel):
 
 
 class Product(BaseModel):
+    """
+    Unified offer model for retail + marketplace + classified sources.
+    """
     model_config = ConfigDict(from_attributes=True)
 
     id: int
     name: str
     price: float
+
+    currency: str = "IRR"
+    brand: Optional[str] = None
+    model_name: Optional[str] = None
+
+    # condition-aware fields
+    condition: Literal["new", "used", "refurbished"] = "new"
+    source_type: Literal["retail", "aggregator", "classified", "marketplace"] = "retail"
+
+    # trust/seller fields
+    seller_name: Optional[str] = None
+    seller_type: Optional[Literal["store", "individual", "unknown"]] = "unknown"
+    seller_reputation: Optional[float] = Field(default=None, ge=0, le=5)
+
+    # location/negotiation fields
+    location: Optional[str] = None
+    price_negotiable: bool = False
+
+    # inventory/logistics
+    availability: Optional[Literal["in_stock", "out_of_stock", "unknown"]] = "unknown"
+    warranty_months: Optional[int] = Field(default=None, ge=0)
+
+    # source linkage
+    source_name: Optional[str] = None
+    source_url: Optional[str] = None
 
 
 class AdvisorInput(BaseModel):
@@ -106,3 +141,20 @@ class AdvisorResponse(BaseModel):
     recommended_product: Optional[Product] = None
     reasoning: str
     alternatives: List[Product] = Field(default_factory=list)
+
+
+# Pydantic v2: resolve forward refs / full model definitions
+UserIntent.model_rebuild()
+ProductQuestionOption.model_rebuild()
+ProductQuestion.model_rebuild()
+DynamicQuestionsRequest.model_rebuild()
+DynamicQuestionFlowRequest.model_rebuild()
+ProductQuestionsRequest.model_rebuild()
+ProductQuestionsResponse.model_rebuild()
+DynamicQuestionFlowResponse.model_rebuild()
+BrandListRequest.model_rebuild()
+BrandListResponse.model_rebuild()
+Product.model_rebuild()
+AdvisorInput.model_rebuild()
+AdvisorRequest.model_rebuild()
+AdvisorResponse.model_rebuild()
