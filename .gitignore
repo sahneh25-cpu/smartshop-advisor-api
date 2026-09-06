@@ -18,3 +18,19 @@ out.json
 .DS_Store
 Thumbs.db
 .vscode/
+
+# Secrets
+.env
+.env.*
+
+# Local scripts / scratch
+fix_files.py
+list_models.py
+test_gemini.py
+test_key.py
+
+# Local notes / outputs
+project_structure.txt
+search_results.txt
+pasted-text-*.txt
+
