@@ -1,62 +1,20 @@
 ﻿# Python
 __pycache__/
-*.py[cod]
+*.pyc
 *.pyo
 *.pyd
-.Python
-*.egg
-*.egg-info/
-dist/
-build/
-
-# Virtual Environment
-venv/
 .venv/
-env/
+venv/
 
-# Environment Variables
-.env.*
-!.env.example
+# Local artifacts
+_audit/
+*.bak
+*.bak2
+*.bak3
+*.tmp
+out.json
 
-# Database
-*.db
-*.sqlite3
-
-# Alembic
-# (alembic/ folder is tracked, but ignore temp files)
-alembic/versions/__pycache__/
-
-# IDEs
-.idea/
-.vscode/
-*.suo
-*.user
-
-# OS
+# OS / IDE
 .DS_Store
 Thumbs.db
-desktop.ini
-
-# Logs
-*.log
-logs/
-
-# Pytest
-.pytest_cache/
-htmlcov/
-.coverage
-
-.env
-
-search_results.txt
-test_key.py
-test_gemini.py
-list_models.py
-tests/__pycache__/
-
-# Temporary code files and text backups
-*.bak
-backup/
-pasted-text*.txt
-project_structure.txt
-fix_files.py
+.vscode/
