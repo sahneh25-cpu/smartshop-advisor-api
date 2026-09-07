@@ -72,7 +72,7 @@ def create_store(payload: Dict[str, Any]):
         "name": payload.get("name"),
         "slug": payload.get("slug"),
         "website": payload.get("website"),
-        "search_type": payload.get("search_type"),
+        "source_type": payload.get("source_type") or payload.get("search_type"),
         "is_active": payload.get("is_active", True),
         "priority": payload.get("priority", 0),
     }
@@ -97,12 +97,17 @@ def update_store(store_id: int, payload: Dict[str, Any]):
         raise HTTPException(status_code=404, detail="Store not found")
 
     # partial update
-    for k in ["name", "slug", "website", "search_type", "is_active", "priority"]:
+    for k in ["name", "slug", "website", "source_type", "is_active", "priority"]:
         if k in payload:
             item[k] = payload[k]
 
+    # backward compatibility: accept old clients sending search_type
+    if "source_type" not in payload and payload.get("search_type") is not None:
+        item["source_type"] = payload.get("search_type")
+
     _store_db[store_id] = item
     return item
+
 
 @app.delete("/api/v1/stores/{store_id}")
 def delete_store(store_id: int):
