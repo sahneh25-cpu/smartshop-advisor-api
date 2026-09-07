@@ -10,7 +10,7 @@ def test_stores_crud_flow():
         "name": "SnapMarket",
         "slug": "snapmarket",
         "website": "https://snapp.market",
-        "search_type": "marketplace",
+        "source_type": "marketplace",
         "is_active": True,
         "priority": 4
     })
