@@ -9,9 +9,11 @@ app = FastAPI(
     version="1.0.0",
 )
 
+
 @app.get("/health")
 def health():
     return {"status": "ok"}
+
 
 # Keep AI router
 app.include_router(ai_router, prefix="/api/v1")
@@ -20,6 +22,7 @@ app.include_router(ai_router, prefix="/api/v1")
 # Agent session fallback (for tests/api/test_agent_session.py)
 # -----------------------------
 _sessions: Dict[str, Dict[str, Any]] = {}
+
 
 @app.post("/api/v1/agent/session/start")
 def start_session(payload: Dict[str, Any]):
@@ -30,6 +33,8 @@ def start_session(payload: Dict[str, Any]):
         "step": 0,
         "user_query": user_query,
         "answers": [],
+        "source_type": payload.get("source_type", "retail"),
+        "classified_opt_in": payload.get("classified_opt_in", False),
     }
 
     return {
@@ -37,6 +42,7 @@ def start_session(payload: Dict[str, Any]):
         "current_question": "بودجه شما چقدر است",
         "is_complete": False,
     }
+
 
 @app.post("/api/v1/agent/session/next")
 def next_session(payload: Dict[str, Any]):
@@ -50,18 +56,57 @@ def next_session(payload: Dict[str, Any]):
     s["answers"].append(user_answer)
     s["step"] += 1
 
-    # Minimal contract expected by tests
+    source_type = s.get("source_type", "retail")
+    classified_opt_in = s.get("classified_opt_in", False)
+
+    # classified flow (opt-in)
+    if source_type == "classified" and classified_opt_in:
+        if s["step"] == 1:
+            return {
+                "session_id": session_id,
+                "current_question": "محدوده مکانی شما برای خرید کجاست؟",
+                "is_complete": False,
+            }
+        elif s["step"] == 2:
+            return {
+                "session_id": session_id,
+                "current_question": "کالای نو می‌خواهید یا کارکرده؟",
+                "is_complete": False,
+            }
+        elif s["step"] == 3:
+            return {
+                "session_id": session_id,
+                "current_question": "ترجیح می‌دهید فروشنده شخصی باشد یا فروشگاه؟",
+                "is_complete": False,
+            }
+        else:
+            return {
+                "session_id": session_id,
+                "current_question": "ممنون، اطلاعات کافی برای بررسی گزینه‌های دست‌دوم را داریم.",
+                "is_complete": True,
+            }
+
+    # retail/default flow
+    if s["step"] == 1:
+        return {
+            "session_id": session_id,
+            "current_question": "برند مورد نظرتان چیست",
+            "is_complete": False,
+        }
+
     return {
         "session_id": session_id,
-        "current_question": "برند مورد نظرتان چیست" if s["step"] == 1 else "کاربری اصلی شما چیست",
+        "current_question": "کاربری اصلی شما چیست",
         "is_complete": False,
     }
+
 
 # -----------------------------
 # Stores fallback CRUD (for tests/api/test_stores_api.py)
 # -----------------------------
 _store_db: Dict[int, Dict[str, Any]] = {}
 _store_seq = 0
+
 
 @app.post("/api/v1/stores", status_code=201)
 def create_store(payload: Dict[str, Any]):
@@ -79,9 +124,11 @@ def create_store(payload: Dict[str, Any]):
     _store_db[_store_seq] = item
     return item
 
+
 @app.get("/api/v1/stores")
 def list_stores():
     return list(_store_db.values())
+
 
 @app.get("/api/v1/stores/{store_id}")
 def get_store(store_id: int):
@@ -89,6 +136,7 @@ def get_store(store_id: int):
     if not item:
         raise HTTPException(status_code=404, detail="Store not found")
     return item
+
 
 @app.put("/api/v1/stores/{store_id}")
 def update_store(store_id: int, payload: Dict[str, Any]):
